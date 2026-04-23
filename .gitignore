@@ -1,0 +1,51 @@
+# Maven
+target/
+*.jar
+*.war
+*.ear
+*.class
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Spring Boot
+application-*.properties
+application-*.yml
+
+# Build
+build/
+out/
+bin/
+
+# Node / Frontend
+node_modules/
+dist/
+npm-debug.log
+
+# Database
+*.db
+*.ser
+data/evidence-store.ser
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local

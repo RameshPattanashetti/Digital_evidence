@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Evidence MVC Dashboard</title>
+    <link rel="stylesheet" href="/styles.css?v=20260420-1">
+</head>
+<body>
+<main class="app-shell">
+    <aside class="rail">
+        <div class="brand-block">
+            <span class="brand-mark">DE</span>
+            <div>
+                <p class="eyebrow">Spring MVC Dashboard</p>
+                <h1>Evidence Console</h1>
+            </div>
+        </div>
+
+        <div class="rail-card">
+            <p class="rail-label">Operational mode</p>
+            <strong>Server-rendered UI</strong>
+            <p class="rail-text">Track chain of custody from a clean, responsive web interface.</p>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="#create-case">Create case</a>
+            <a href="#add-evidence">Add evidence</a>
+            <a href="#custody">Transfer custody</a>
+            <a href="#search-archive">Search & archive</a>
+            <a href="#reports">Reports</a>
+        </nav>
+
+        <div class="rail-stats">
+            <div>
+                <span>Pattern</span>
+                <strong>MVC</strong>
+            </div>
+            <div>
+                <span>Database</span>
+                <strong>MongoDB</strong>
+            </div>
+            <div>
+                <span>View</span>
+                <strong>Thymeleaf</strong>
+            </div>
+        </div>
+    </aside>
+
+    <section class="workspace">
+        <header class="hero">
+            <div class="hero-copy">
+                <div class="hero-refresh-badge">UI Refresh 2026</div>
+                <div class="hero-luxury-badge">Evidence Suite</div>
+                <p class="tag">Spring Boot Web + Thymeleaf</p>
+                <h2>Digital Evidence & Chain-of-Custody</h2>
+                <p>High-contrast interface for managing cases, custody transfers, search results, and report output.</p>
+            </div>
+
+            <div class="hero-panels">
+                <div class="hero-panel">
+                    <span>Layer</span>
+                    <strong>Controller → Service → Repository</strong>
+                </div>
+                <div class="hero-panel">
+                    <span>Output</span>
+                    <strong>Readable audit-ready reports</strong>
+                </div>
+            </div>
+
+            <div class="status-strip">
+                <div>
+                    <span>Controller</span>
+                    <strong>Active</strong>
+                </div>
+                <div>
+                    <span>Database</span>
+                    <strong>MongoDB</strong>
+                </div>
+                <div>
+                    <span>View</span>
+                    <strong>Thymeleaf</strong>
+                </div>
+            </div>
+        </header>
+
+    <section class="alerts">
+        <div class="ok" th:if="${message}" th:text="${message}"></div>
+        <div class="err" th:if="${error}" th:text="${error}"></div>
+    </section>
+
+    <section class="metrics">
+        <article class="metric-card">
+            <span>01</span>
+            <strong>Structured cases</strong>
+            <p>Each incident begins with a clear case record.</p>
+        </article>
+        <article class="metric-card">
+            <span>02</span>
+            <strong>Evidence control</strong>
+            <p>Register every item with full traceability.</p>
+        </article>
+        <article class="metric-card">
+            <span>03</span>
+            <strong>Custody history</strong>
+            <p>Every transfer is preserved for review.</p>
+        </article>
+    </section>
+
+    <section class="grid">
+        <section id="create-case" class="card panel-accent">
+            <div class="card-head">
+                <div>
+                    <p class="card-kicker">Case intake</p>
+                    <h3>Create Case</h3>
+                </div>
+            </div>
+            <form method="post" action="/cases">
+                <label>Case ID<input name="caseId" placeholder="CASE-001" required></label>
+                <label>Case Title<input name="caseTitle" placeholder="Incident title" required></label>
+                <label>Investigator<input name="investigatorName" placeholder="Investigator name" required></label>
+                <button type="submit">Create</button>
+            </form>
+        </section>
+
+        <section id="add-evidence" class="card">
+            <div class="card-head">
+                <div>
+                    <p class="card-kicker">Evidence intake</p>
+                    <h3>Add Evidence</h3>
+                </div>
+            </div>
+            <form method="post" action="/evidence">
+                <label>Case ID<input name="caseId" required th:value="${selectedCaseId}" placeholder="CASE-001"></label>
+                <label>Evidence ID<input name="evidenceId" required placeholder="EV-1001"></label>
+                <label>Description<input name="description" required placeholder="Evidence description"></label>
+                <label>Type
+                    <select name="type">
+                        <option th:each="t : ${evidenceTypes}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </label>
+                <label>Collected By<input name="collectedBy" required placeholder="Collector name"></label>
+                <button type="submit">Add</button>
+            </form>
+        </section>
+
+        <section id="custody" class="card">
+            <div class="card-head">
+                <div>
+                    <p class="card-kicker">Chain of custody</p>
+                    <h3>Transfer Custody</h3>
+                </div>
+            </div>
+            <form method="post" action="/custody">
+                <label>Evidence ID<input name="evidenceId" required placeholder="EV-1001"></label>
+                <label>New Custodian<input name="newCustodian" required placeholder="Receiving officer"></label>
+                <label>Reason<input name="reason" required placeholder="Transfer reason"></label>
+                <button type="submit">Transfer</button>
+            </form>
+        </section>
+
+        <section id="search-archive" class="card">
+            <div class="card-head">
+                <div>
+                    <p class="card-kicker">Lookup tools</p>
+                    <h3>Archive Evidence</h3>
+                </div>
+            </div>
+            <form method="post" action="/evidence/archive">
+                <label>Evidence ID<input name="evidenceId" required placeholder="EV-1001"></label>
+                <button type="submit">Archive</button>
+            </form>
+
+            <div class="card-head spaced-head">
+                <div>
+                    <p class="card-kicker">Search</p>
+                    <h3>Search Evidence</h3>
+                </div>
+            </div>
+            <form method="get" action="/">
+                <input type="hidden" name="caseId" th:value="${selectedCaseId}">
+                <label>Evidence ID<input name="searchEvidenceId" required placeholder="EV-1001"></label>
+                <button type="submit">Search</button>
+            </form>
+            <div class="result" th:if="${searchResult}">
+                <strong th:text="${searchResult.evidenceId}"></strong>
+                <p th:text="${searchResult.description}"></p>
+                <p>Custodian: <span th:text="${searchResult.currentCustodian}"></span></p>
+                <p>Status: <span th:text="${searchResult.status}"></span></p>
+            </div>
+            <div class="err" th:if="${searchError}" th:text="${searchError}"></div>
+        </section>
+    </section>
+
+    <section id="reports" class="card report-card">
+        <div class="title-row">
+            <div>
+                <p class="card-kicker">Reporting</p>
+                <h3>Cases</h3>
+                <p class="section-note">Use a case chip to switch the report preview.</p>
+            </div>
+        </div>
+        <div class="chips">
+            <a th:each="c : ${cases}" th:href="@{/(caseId=${c.caseId})}" th:text="${c.caseId + ' - ' + c.caseTitle}"></a>
+        </div>
+    </section>
+
+    <section class="card report-card">
+        <div class="title-row">
+            <div>
+                <p class="card-kicker">Audit output</p>
+                <h3>Case Report</h3>
+            </div>
+        </div>
+        <pre th:text="${report}"></pre>
+    </section>
+    </section>
+</main>
+</body>
+</html>

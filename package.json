@@ -1,0 +1,12 @@
+{
+  "name": "digital-evidence-runner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NPM scripts to run the Digital Evidence apps",
+  "scripts": {
+    "start": "set \"JAVA_HOME=C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot\" && set \"PATH=%JAVA_HOME%\\bin;%PATH%\" && mvn -f spring-app/pom.xml spring-boot:run -Dspring-boot.run.profiles=mongo",
+    "start:mongo": "set \"JAVA_HOME=C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot\" && set \"PATH=%JAVA_HOME%\\bin;%PATH%\" && mvn -f spring-app/pom.xml spring-boot:run -Dspring-boot.run.profiles=mongo",
+    "start:console": "set \"JAVA_HOME=C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.18.8-hotspot\" && set \"PATH=%JAVA_HOME%\\bin;%PATH%\" && mvn -q compile exec:java",
+    "start:ui": "npx --yes http-server spring-app/src/main/resources/static -p 8081 -o /app/index.html"
+  }
+}
