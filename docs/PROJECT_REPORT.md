@@ -63,51 +63,122 @@ Major Use Cases (4): UC1, UC2, UC3, UC5
 
 Minor Use Cases (4): UC4, UC6, UC7, UC8
 
+### 8.1.1 Use Case Diagram
+```mermaid
+graph TB
+    actor Investigator
+    actor Admin
+    actor Custodian
+
+    subgraph DigitalEvidenceSystem["Digital Evidence System"]
+        UC1["Create Case"]
+        UC2["Add Evidence"]
+        UC3["Search Evidence"]
+        UC4["View Custody History"]
+        UC5["Generate Report"]
+        UC6["Accept Evidence"]
+        UC7["Archive Evidence"]
+        UC8["Transfer Custody"]
+    end
+
+    Investigator -->|uses| UC1
+    Investigator -->|uses| UC2
+    Investigator -->|uses| UC3
+    Investigator -->|uses| UC4
+    Investigator -->|uses| UC5
+    Investigator -->|uses| UC8
+
+    Admin -->|uses| UC3
+    Admin -->|uses| UC4
+    Admin -->|uses| UC5
+
+    Custodian -->|uses| UC3
+    Custodian -->|uses| UC4
+    Custodian -->|uses| UC6
+    Custodian -->|uses| UC7
+    Custodian -->|uses| UC8
+```
+
 ### 8.2 Class Model
 ```mermaid
 classDiagram
+    class EvidenceType {
+        IMAGE
+        VIDEO
+        DOCUMENT
+    }
+
+    class EvidenceStatus {
+        REGISTERED
+        IN_CUSTODY
+        TRANSFERRED
+        ARCHIVED
+    }
+
+    class EvidenceService {
+        +createCase()
+        +addEvidence()
+        +transferCustody()
+        +generateReport()
+    }
+
     class CaseFile {
         -String caseId
         -String caseTitle
-        -String investigatorName
-        -List~String~ evidenceIds
+        -Investigator investigator
+        -List~DigitalEvidence~ evidenceList
+        +addEvidence()
     }
 
     class DigitalEvidence {
         -String evidenceId
-        -String caseId
         -String description
         -EvidenceType type
-        -String collectedBy
-        -String currentCustodian
         -EvidenceStatus status
+        -Investigator collectedBy
+        -Custodian currentCustodian
         -List~CustodyEvent~ custodyHistory
+        +transferCustody()
+        +archive()
     }
 
     class CustodyEvent {
-        -String fromCustodian
-        -String toCustodian
+        -Custodian fromCustodian
+        -Custodian toCustodian
         -String reason
         -LocalDateTime timestamp
     }
 
     class EvidenceRepository {
-        -Map~String, CaseFile~ caseStore
-        -Map~String, DigitalEvidence~ evidenceStore
+        +save()
+        +findById()
     }
 
-    class ChainOfCustodyService {
-        +createCase()
-        +addEvidence()
-        +transferCustody()
-        +generateCaseReport()
+    class User {
+        -String userId
+        -String name
     }
 
+    class Investigator {
+    }
+
+    class Custodian {
+    }
+
+    EvidenceService --> CaseFile
+    EvidenceService --> EvidenceRepository
     CaseFile "1" o-- "many" DigitalEvidence
     DigitalEvidence "1" o-- "many" CustodyEvent
-    ChainOfCustodyService ..> EvidenceRepository
-    EvidenceRepository ..> CaseFile
-    EvidenceRepository ..> DigitalEvidence
+    DigitalEvidence --> EvidenceType
+    DigitalEvidence --> EvidenceStatus
+    EvidenceRepository --> CaseFile
+    EvidenceRepository --> DigitalEvidence
+    CaseFile --> Investigator
+    DigitalEvidence --> Investigator
+    DigitalEvidence --> Custodian
+    CustodyEvent --> Custodian
+    Investigator --|> User
+    Custodian --|> User
 ```
 
 ### 8.3 Sequence of Custody Transfer
@@ -128,7 +199,26 @@ sequenceDiagram
     Service-->>Main: Success message
 ```
 
-### 8.4 Activity Diagram 1 (Create Case - UC1)
+### 8.4 Activity Diagram 0 (Main Workflow - Complete Case Lifecycle)
+```mermaid
+flowchart TD
+    A([Start]) --> B[Create Case]
+    B --> C[Add Evidence]
+    C --> D[Store in Custody]
+    D --> E{Transfer?}
+    E -- Yes --> F[Transfer Custody]
+    F --> E
+    E -- No --> G{Archive?}
+    G -- Yes --> H[Archive Evidence]
+    H --> G
+    G -- No --> I{Generate Report?}
+    I -- Yes --> J[Generate Report]
+    J --> I
+    I -- No --> K[Close Case]
+    K --> L([End])
+```
+
+### 8.5 Activity Diagram 1 (Create Case - UC1)
 ```mermaid
 flowchart TD
     A[Start] --> B[Enter case details]
@@ -141,7 +231,7 @@ flowchart TD
     G --> H[End]
 ```
 
-### 8.5 Activity Diagram 2 (Add Evidence - UC2)
+### 8.6 Activity Diagram 2 (Add Evidence - UC2)
 ```mermaid
 flowchart TD
     A[Start] --> B[Select existing case]
@@ -156,7 +246,7 @@ flowchart TD
     I --> J[End]
 ```
 
-### 8.6 Activity Diagram 3 (Transfer Custody - UC3)
+### 8.7 Activity Diagram 3 (Transfer Custody - UC3)
 ```mermaid
 flowchart TD
     A[Start] --> B[Enter evidence ID and new custodian]
@@ -171,7 +261,7 @@ flowchart TD
     J --> E
 ```
 
-### 8.7 Activity Diagram 4 (Generate Report - UC5)
+### 8.8 Activity Diagram 4 (Generate Report - UC5)
 ```mermaid
 flowchart TD
     A[Start] --> B[Select case]
@@ -186,19 +276,35 @@ flowchart TD
     J --> E
 ```
 
-### 8.8 State Diagram 1 (Case Lifecycle)
+### 8.9 State Diagram 1 (Case Lifecycle)
 ```mermaid
 stateDiagram-v2
-    [*] --> DRAFT : create
-    DRAFT --> ACTIVE : first evidence added
-    ACTIVE --> ACTIVE : evidence/custody updates
-    ACTIVE --> CLOSED : investigation complete
-    CLOSED --> REOPENED : reopen case
-    REOPENED --> ACTIVE : resume investigation
-    CLOSED --> [*]
+    [*] --> CaseCreated
+    CaseCreated --> CaseActive : add evidence
+    
+    CaseActive --> EvidenceRegistered : register evidence
+    CaseActive --> GeneratingReport : generate report
+    CaseActive --> CaseClosed : investigation complete
+    
+    EvidenceRegistered --> InCustody : accepted by custodian
+    
+    InCustody --> Transferred : transfer custody
+    InCustody --> Transferred : accepted by new custodian
+    
+    Transferred --> InCustody : accepted by new custodian
+    Transferred --> Archived : archive evidence
+    
+    GeneratingReport --> ReportReady : report created
+    ReportReady --> CaseActive : view/close report
+    
+    CaseClosed --> CaseReopened : reopen case
+    CaseReopened --> CaseActive
+    CaseReopened --> [*]
+    
+    Archived --> [*]
 ```
 
-### 8.9 State Diagram 2 (Evidence Lifecycle)
+### 8.10 State Diagram 2 (Evidence Lifecycle)
 ```mermaid
 stateDiagram-v2
     [*] --> REGISTERED : add evidence
@@ -210,7 +316,7 @@ stateDiagram-v2
     ARCHIVED --> [*]
 ```
 
-### 8.10 State Diagram 3 (Custody Transfer Request)
+### 8.11 State Diagram 3 (Custody Transfer Request)
 ```mermaid
 stateDiagram-v2
     [*] --> REQUESTED : initiate transfer
@@ -222,7 +328,7 @@ stateDiagram-v2
     REJECTED --> [*]
 ```
 
-### 8.11 State Diagram 4 (Report Generation Lifecycle)
+### 8.12 State Diagram 4 (Report Generation Lifecycle)
 ```mermaid
 stateDiagram-v2
     [*] --> IDLE
