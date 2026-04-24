@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Evidence | Digital Evidence</title>
+    <link rel="stylesheet" href="./styles.css?v=20260420-3">
+</head>
+<body>
+<main class="app-shell">
+    <aside class="rail">
+        <div class="brand-block">
+            <span class="brand-mark">DE</span>
+            <div>
+                <p class="eyebrow">Digital Evidence</p>
+                <h1>Case Control Suite</h1>
+            </div>
+        </div>
+
+        <div class="rail-card">
+            <p class="rail-label">Current page</p>
+            <strong>Add Evidence</strong>
+            <p class="rail-text">Capture the item details and map it to an existing case.</p>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="index.html">Overview</a>
+            <a href="cases.html">Create case</a>
+            <a href="evidence.html">Add evidence</a>
+            <a href="custody.html">Transfer custody</a>
+            <a href="search.html">Search & archive</a>
+            <a href="reports.html">Reports</a>
+        </nav>
+    </aside>
+
+    <section class="workspace">
+        <header class="hero">
+            <div class="hero-copy">
+                <p class="tag">Evidence Intake</p>
+                <h2>Add Evidence Record</h2>
+                <p>Register each digital artifact with type, description, and collector information.</p>
+            </div>
+        </header>
+
+        <section id="flash" class="flash" hidden></section>
+
+        <section class="card">
+            <div class="card-head">
+                <div>
+                    <p class="card-kicker">Evidence intake</p>
+                    <h3>Add Evidence</h3>
+                </div>
+                <button id="refreshCaseOptionsBtn" type="button" class="secondary-btn">Refresh Cases</button>
+            </div>
+            <form id="addEvidenceForm">
+                <label>Case
+                    <select id="caseIdSelect" name="caseId" required>
+                        <option value="">Loading cases...</option>
+                    </select>
+                </label>
+                <label>Description<input name="description" placeholder="Device, file, photo, or log" required></label>
+                <label>Type
+                    <select name="type">
+                        <option>LOG</option>
+                        <option>IMAGE</option>
+                        <option>VIDEO</option>
+                        <option>DOCUMENT</option>
+                        <option>AUDIO</option>
+                        <option>OTHER</option>
+                    </select>
+                </label>
+                <label>Date and Time<input type="datetime-local" name="date" required></label>
+                <label>Location<input name="location" placeholder="Digital Vault - Rack 2" required></label>
+                <button type="submit">Add Evidence</button>
+            </form>
+        </section>
+    </section>
+</main>
+<script src="./app.js"></script>
+</body>
+</html>

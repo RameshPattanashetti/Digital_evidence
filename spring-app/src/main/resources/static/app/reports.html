@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | Digital Evidence</title>
+    <link rel="stylesheet" href="./styles.css?v=20260420-3">
+</head>
+<body>
+<main class="app-shell">
+    <aside class="rail">
+        <div class="brand-block">
+            <span class="brand-mark">DE</span>
+            <div>
+                <p class="eyebrow">Digital Evidence</p>
+                <h1>Case Control Suite</h1>
+            </div>
+        </div>
+
+        <div class="rail-card">
+            <p class="rail-label">Current page</p>
+            <strong>Reports</strong>
+            <p class="rail-text">Generate and review case-wise chain-of-custody reports.</p>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="index.html">Overview</a>
+            <a href="cases.html">Create case</a>
+            <a href="evidence.html">Add evidence</a>
+            <a href="custody.html">Transfer custody</a>
+            <a href="search.html">Search & archive</a>
+            <a href="reports.html">Reports</a>
+        </nav>
+    </aside>
+
+    <section class="workspace">
+        <header class="hero">
+            <div class="hero-copy">
+                <p class="tag">Report Center</p>
+                <h2>Case Reports</h2>
+                <p>Select any case to generate an audit-style summary with full evidence and custody history.</p>
+            </div>
+        </header>
+
+        <section id="flash" class="flash" hidden></section>
+
+        <section class="card report-card">
+            <div class="title-row">
+                <div>
+                    <p class="card-kicker">Reporting</p>
+                    <h3>Case Reports</h3>
+                    <p class="section-note">Pick a case chip to load the latest chain-of-custody summary.</p>
+                </div>
+                <button id="refreshCasesBtn" type="button" class="secondary-btn">Refresh</button>
+            </div>
+            <div id="cases" class="chips"></div>
+            <pre id="reportBox">Select a case to view report.</pre>
+        </section>
+    </section>
+</main>
+<script src="./app.js"></script>
+</body>
+</html>
